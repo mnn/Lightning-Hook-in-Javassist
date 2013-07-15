@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class CustomClassLoader extends ClassLoader {
+    private static final boolean showDebugMessages = true;
+
+    private static void printDebug(String msg) {
+        if (showDebugMessages) System.out.println("[CustomClassLoader] " + msg);
+    }
 
     public static byte[] inputStreamToByteArray(InputStream is) {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -25,13 +30,20 @@ public class CustomClassLoader extends ClassLoader {
 
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
-        //System.out.println("CCL - loadClass: processing class - " + name);
+        printDebug("loadClass: processing class - " + name);
+        Class cachedResult = findLoadedClass(name);
+        if (cachedResult != null) {
+            printDebug("returning cached data");
+            return cachedResult;
+        }
         if (Transformer.TARGET_CLASS.equals(name)) {
             InputStream inputStream = getResourceAsStream(name.replace('.', '/') + ".class");
             byte[] inputByteCode = inputStreamToByteArray(inputStream);
             byte[] outputByteCode = Transformer.transform(inputByteCode);
+            printDebug("returning freshly transformed class");
             return defineClass(name, outputByteCode, 0, outputByteCode.length);
         }
+        printDebug("calling parent CL");
         return super.loadClass(name);
     }
 }

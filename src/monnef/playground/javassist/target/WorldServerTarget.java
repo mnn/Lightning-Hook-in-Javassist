@@ -1,34 +1,32 @@
 package monnef.playground.javassist.target;
 
-import static java.lang.System.out;
-
 public class WorldServerTarget implements IWorldServerTarget {
     private int foo;
 
-    static {
-        System.out.println("WorldServerTarget - init");
+    private static void printDebug(String msg) {
+        System.out.println("[TargetClass] " + msg);
     }
 
-    private void println(String msg) {
-        out.println(msg);
+    static {
+        printDebug("WorldServerTarget - init");
     }
 
     @Override
     public void process() {
-        println("process start");
+        printDebug("process start");
         foo++;
         int pos = 4;
-        println("after pos init");
+        printDebug("after pos init");
         if (canStrikeAt(pos)) {
-            strike(pos);
+            strike(pos); // <-- we want to wrap this method call
         }
-        println("after canStrike if");
+        printDebug("after canStrike if");
         foo--;
-        println("process end");
+        printDebug("process end");
     }
 
     public void strike(int pos) {
-        println("striking at " + pos);
+        printDebug("☇☇☇ striking at " + pos);
     }
 
     public boolean canStrikeAt(int pos) {

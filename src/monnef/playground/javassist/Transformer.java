@@ -24,11 +24,11 @@ public class Transformer {
                     new ExprEditor() {
                         public void edit(MethodCall m)
                                 throws CannotCompileException {
-                            //System.out.println(String.format("MethodCall: cname - %s, mname - %s", m.getClassName(), m.getMethodName()));
+                            //System.out.println(String.format("[Transformer] MethodCall: cname - %s, mname - %s", m.getClassName(), m.getMethodName()));
                             if (m.getClassName().equals(TARGET_CLASS)
                                     && m.getMethodName().equals("strike")) {
                                 m.replace(String.format("{ if(%s.invoke($1)){ $_ = $proceed($$);} }", HOOK_PROCESSOR_CLASS));
-                                System.out.println("inserting hook");
+                                System.out.println("[Transformer] inserting hook");
                                 hookInserted = true;
                             }
                         }
